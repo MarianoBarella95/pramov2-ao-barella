@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pramov2_ao1_barella/screens/editar_contacto.dart';
 import 'package:pramov2_ao1_barella/screens/nuevo_contacto.dart';
 import 'package:provider/provider.dart';
 import 'package:pramov2_ao1_barella/provider/contacto_provider.dart';
@@ -11,17 +12,34 @@ class Contactos extends StatefulWidget {
 }
 
 class _ContactosState extends State<Contactos> {
+  String query = '';
+
   @override
   Widget build(BuildContext context) {
     final contactosProvider = context.watch<ContactoProvider>();
+
+    // Filtrar contactos según la query
+    final contactosFiltrados = query.isEmpty
+        ? contactosProvider.contactos
+        : contactosProvider.contactos.where((c) {
+            final nombreCompleto =
+                "${c.nombre.toLowerCase()} ${c.apellido.toLowerCase()}";
+            return nombreCompleto.contains(query.toLowerCase());
+          }).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Contactos"),
         actions: [
-          //IconButton(onPressed: (){}, icon: Icon(Icons.add))
+          IconButton(
+            onPressed: () {
+              showSearchDialog(context);
+            },
+            icon: Icon(Icons.search, size: 30),
+          ),
         ],
       ),
-      body: contactosProvider.contactos.isEmpty
+      body: contactosFiltrados.isEmpty
           ? Center(
               child: SizedBox(
                 height: 400,
@@ -41,7 +59,6 @@ class _ContactosState extends State<Contactos> {
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
-                          
                         ),
                       ),
                     ],
@@ -50,9 +67,9 @@ class _ContactosState extends State<Contactos> {
               ),
             )
           : ListView.builder(
-              itemCount: contactosProvider.contactos.length,
+              itemCount: contactosFiltrados.length,
               itemBuilder: (context, index) {
-                final contacto = contactosProvider.contactos[index];
+                final contacto = contactosFiltrados[index];
                 return ListTile(
                   leading: Icon(Icons.person_3_sharp, size: 40),
                   title: Text(
@@ -61,6 +78,12 @@ class _ContactosState extends State<Contactos> {
                   ),
                   subtitle: Text(contacto.telefono, style: TextStyle(fontSize: 15)),
                   tileColor: Colors.grey[300],
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditarContacto(contacto: contacto),
+                    ),
+                  ),
                   trailing: IconButton(
                     icon: Icon(
                       Icons.delete_forever,
@@ -83,6 +106,37 @@ class _ContactosState extends State<Contactos> {
         },
         child: Icon(Icons.add),
       ),
+    );
+  }
+
+  void showSearchDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Buscar contacto'),
+          content: TextField(
+            autofocus: true,
+            decoration: const InputDecoration(hintText: 'Ingrese un nombre'),
+            onChanged: (value) {
+              setState(() {
+                query = value;
+              });
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  query = '';
+                });
+                Navigator.pop(context);
+              },
+              child: const Text('Limpiar'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

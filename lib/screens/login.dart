@@ -22,7 +22,9 @@ class _LoginState extends State<Login> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset("assets/images/notebook.png", height: 150, width: 150),
+            SizedBox(height: 20),
             Text("AGENDA FLUTTER", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+            SizedBox(height: 20),
             SizedBox(height: 200, width: 300, child: 
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -36,6 +38,7 @@ class _LoginState extends State<Login> {
                 ),
                 TextField(
                   controller: _passwordController,
+                  obscureText: true,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     label: Text("Contraseña", style: TextStyle(fontSize: 20))
@@ -44,6 +47,7 @@ class _LoginState extends State<Login> {
               ],
             )
             ),
+            SizedBox(height: 20),
             ElevatedButton(onPressed: (){
 
               if(_nombreController.text.isEmpty || _passwordController.text.isEmpty){

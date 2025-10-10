@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pramov2_ao1_barella/model/contacto.dart';
 import 'package:provider/provider.dart';
 import 'package:pramov2_ao1_barella/provider/contacto_provider.dart';
+// import 'package:uuid/uuid.dart'; // not used
 
 class NuevoContacto extends StatefulWidget {
   const NuevoContacto({super.key});
@@ -11,19 +12,32 @@ class NuevoContacto extends StatefulWidget {
 }
 
 class _NuevoContactoState extends State<NuevoContacto> {
+
+  int id = 0;
+
   final _nombreController = TextEditingController();
   final _apellidoController = TextEditingController();
   final _telefonoController = TextEditingController();
   final _domicilioController = TextEditingController();
-  final _generoController = TextEditingController();
 
   void _guardarContacto() {
+
+    if (_nombreController.text.isEmpty ||
+        _apellidoController.text.isEmpty ||
+        _telefonoController.text.isEmpty ||
+        _domicilioController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Debe completar todos los campos")));
+      return;
+    }
+
     final nuevoContacto = Contacto(
+      id: id++,
       nombre: _nombreController.text,
       apellido: _apellidoController.text,
       telefono: _telefonoController.text,
       domicilio: _domicilioController.text,
-      genero: _generoController.text,
+      genero: _generoSeleccionado,
     );
 
   Provider.of<ContactoProvider>(context, listen: false)
@@ -52,6 +66,8 @@ class _NuevoContactoState extends State<NuevoContacto> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset("assets/images/add-friend.png", height: 150, width: 150),
+              SizedBox(height: 30),
               TextField(
                 controller: _nombreController,
                 decoration: InputDecoration(
@@ -108,5 +124,14 @@ class _NuevoContactoState extends State<NuevoContacto> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _nombreController.dispose();
+    _apellidoController.dispose();
+    _telefonoController.dispose();
+    _domicilioController.dispose();
+    super.dispose();
   }
 }
