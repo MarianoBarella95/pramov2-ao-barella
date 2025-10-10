@@ -1,3 +1,3 @@
-# pramov2_ao1_barella
+# Agenda Flutter
 
-A new Flutter project.
+Aplicación de agenda de contactos creada en Flutter para la materia Programación de Aplicaciones Móviles 2. 
