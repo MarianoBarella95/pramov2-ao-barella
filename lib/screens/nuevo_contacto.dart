@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pramov2_ao1_barella/model/contacto.dart';
 import 'package:provider/provider.dart';
 import 'package:pramov2_ao1_barella/provider/contacto_provider.dart';
-// import 'package:uuid/uuid.dart'; // not used
 
 class NuevoContacto extends StatefulWidget {
   const NuevoContacto({super.key});
@@ -46,7 +45,7 @@ class _NuevoContactoState extends State<NuevoContacto> {
     Navigator.pop(context, nuevoContacto);
   }
 
-  String _generoSeleccionado = "Masculino"; // valor inicial
+  String _generoSeleccionado = "Masculino"; 
 
 
   @override
