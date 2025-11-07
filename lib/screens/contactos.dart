@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pramov2_ao1_barella/provider/login_provider.dart';
 import 'package:pramov2_ao1_barella/screens/editar_contacto.dart';
 import 'package:pramov2_ao1_barella/screens/nuevo_contacto.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,7 @@ class _ContactosState extends State<Contactos> {
   @override
   Widget build(BuildContext context) {
     final contactosProvider = context.watch<ContactoProvider>();
+    final loginProvider = context.watch<LoginProvider>();
 
     // Filtrar contactos según la query
     final contactosFiltrados = query.isEmpty
@@ -37,6 +39,13 @@ class _ContactosState extends State<Contactos> {
             },
             icon: Icon(Icons.search, size: 30),
           ),
+          IconButton(onPressed: () async {
+
+            await context.read<LoginProvider>().logout();
+
+
+
+          }, icon: Icon(Icons.logout, size: 30, color: Colors.red)),
         ],
       ),
       body: contactosFiltrados.isEmpty
