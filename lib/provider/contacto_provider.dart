@@ -1,12 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:pramov2_ao1_barella/database/db_helper.dart';
 import 'package:pramov2_ao1_barella/model/contacto.dart';
 
 class ContactoProvider extends ChangeNotifier {
-  final List<Contacto> _contactos = []; // Lista privada de contactos
+  List<Contacto> _contactos = []; // Lista privada de contactos
   List<Contacto> get contactos => _contactos; // Getter para acceder a la lista de contactos
 
-  void agregarContacto(Contacto contacto) {
-    _contactos.add(contacto); // Add es un método propio de la clase List en Dart
+  // void agregarContacto(Contacto contacto) {
+  //   _contactos.add(contacto); // Add es un método propio de la clase List en Dart
+  //   notifyListeners();
+  // }
+
+  ContactoProvider() {
+    cargarContactos();
+  }
+
+  Future<void> cargarContactos() async {
+    _contactos = await DbHelper.obtenerContactos();
+    notifyListeners();
+  }
+
+  Future<void> agregarContacto(Contacto contacto) async {
+    final newId = await DbHelper.insertarContacto(contacto);
+    final contactoGuardado = contacto.copyWith(id: newId);
+    _contactos.add(contactoGuardado);
     notifyListeners();
   }
 
@@ -17,20 +34,42 @@ class ContactoProvider extends ChangeNotifier {
         .toList();
   }
 
-  void eliminarContacto(Contacto contacto) {
-    _contactos.remove(contacto); // Remove es un método propio de la clase List en Dart
+  // void eliminarContacto(Contacto contacto) {
+  //   _contactos.remove(contacto); // Remove es un método propio de la clase List en Dart
+  //   notifyListeners();
+  // }
+
+  Future<void> eliminarContacto(Contacto contacto) async {
+    await DbHelper.eliminarContacto(contacto.id!);
+    _contactos.removeWhere((c) => c.id == contacto.id);
     notifyListeners();
   }
 
-  void actualizarContacto(Contacto contacto) {
 
-  /* c ES EL CONTACTO QUE EXISTE EN LA LISTA, contacto es el nuevo que pasamos por parámetro. */   
+//   void actualizarContacto(Contacto contacto) {
 
-  int index = _contactos.indexWhere((c) => c.id == contacto.id); 
-  if (index != -1) {
-    _contactos[index] = contacto;
+//   /* c ES EL CONTACTO QUE EXISTE EN LA LISTA, contacto es el nuevo que pasamos por parámetro. */   
+
+//   int index = _contactos.indexWhere((c) => c.id == contacto.id); 
+//   if (index != -1) {
+//     _contactos[index] = contacto;
+//     notifyListeners();
+//   }
+// }
+
+  Future<void> actualizarContacto(Contacto contacto) async {
+    await DbHelper.actualizarContacto(contacto);
+    
+    final index = _contactos.indexWhere((c) => c.id  == contacto.id);
+  
+    if(index != -1) {
+      _contactos[index] = contacto;
+      
+    }
+
     notifyListeners();
+  
+  
   }
-}
 
 }

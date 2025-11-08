@@ -31,7 +31,7 @@ class _NuevoContactoState extends State<NuevoContacto> {
     }
 
     final nuevoContacto = Contacto(
-      id: id++,
+      // id: id++,
       nombre: _nombreController.text,
       apellido: _apellidoController.text,
       telefono: _telefonoController.text,

@@ -29,7 +29,7 @@ class DbHelper {
             nombre TEXT NOT NULL,
             apellido TEXT NOT NULL,
             telefono TEXT NOT NULL,
-            email TEXT NOT NULL,
+            domicilio TEXT NOT NULL,
             genero TEXT NOT NULL
           )
         ''');
@@ -48,7 +48,6 @@ class DbHelper {
 
     return List.generate(maps.length, (i) {
       return Contacto(
-        id: maps[i]['id'],
         nombre: maps[i]['nombre'],
         apellido: maps[i]['apellido'],
         telefono: maps[i]['telefono'],
@@ -73,7 +72,6 @@ class DbHelper {
       _tableName,
       contacto.toMap(),
       where: 'id = ?',
-      whereArgs: [contacto.id],
     );
   }
 }
