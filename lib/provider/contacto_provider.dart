@@ -40,6 +40,13 @@ class ContactoProvider extends ChangeNotifier {
   // }
 
   Future<void> eliminarContacto(Contacto contacto) async {
+    
+    if(contacto.id == null) {
+      _contactos.remove(contacto);
+      notifyListeners();
+      return;
+    }
+
     await DbHelper.eliminarContacto(contacto.id!);
     _contactos.removeWhere((c) => c.id == contacto.id);
     notifyListeners();
