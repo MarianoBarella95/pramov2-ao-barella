@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pramov2_ao1_barella/screens/contactos.dart';
+import 'package:pramov2_ao1_barella/provider/contacto_provider.dart';
 import 'package:pramov2_ao1_barella/provider/login_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -71,11 +72,13 @@ class _LoginState extends State<Login> {
                     _nombreController.text,
                     _passwordController.text,
                   );
+
+                  await context.read<ContactoProvider>().cargarContactos();
+
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Contactos()));
                 } catch (e) {
                   mostrarMensaje(context, "¡USUARIO Y/O CONTRASEÑA INCORRECTOS!", Colors.red, 2);
                 }
-
-                //Navigator.push(context, MaterialPageRoute(builder: (context) => Contactos()));
               },
               child: Text("INICIAR SESIÓN", style: TextStyle(fontSize: 20)),
             ),

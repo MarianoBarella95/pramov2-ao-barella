@@ -7,12 +7,7 @@ import 'package:pramov2_ao1_barella/provider/login_provider.dart';
 
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => ContactoProvider(),
-      child: const MainApp(),
-    ),
-  );
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
