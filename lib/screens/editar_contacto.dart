@@ -51,12 +51,14 @@ class _EditarContactoState extends State<EditarContacto> {
             TextField(controller: telefonoController, decoration: InputDecoration(labelText: "Teléfono")),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 widget.contacto.nombre = nombreController.text;
                 widget.contacto.apellido = apellidoController.text;
                 widget.contacto.telefono = telefonoController.text;
-                contactosProvider.actualizarContacto(widget.contacto);
-                Navigator.pop(context);
+                await contactosProvider.actualizarContacto(widget.contacto);
+                if (mounted) {
+                  Navigator.pop(context);
+                }
               },
               child: Text("GUARDAR", style: TextStyle(fontSize: 20)),
             ),

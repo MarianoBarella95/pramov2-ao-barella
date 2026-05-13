@@ -21,20 +21,23 @@ class LoginProvider extends ChangeNotifier {
     _loadSession();
   }
 
-  Future<void> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     print("Intentando login con: $email");
     final dio = DioClient.getDio();
 
     try {
-      final response = await dio.post('/auth/login', data: {
+      final response = await dio.post('auth/login', data: {
         'email': email, 
         'password': password,
       });
       print("Respuesta del servidor: ${response.statusCode}");
+      print("Tipo de response.data: ${response.data.runtimeType}");
+      print("Contenido de response.data: ${response.data}");
 
       if (response.statusCode == 200) {
-        String token = response.data is String ? response.data : response.data.toString();
-        print("Token recibido: ${token.substring(0, 20)}...");
+        String token = response.data; // El servidor retorna el token como String directo
+        
+        print("Token recibido: ${token.length > 20 ? token.substring(0, 20) : token}...");
 
         _email = email;
         _isLoggedIn = true;
@@ -46,41 +49,41 @@ class LoginProvider extends ChangeNotifier {
 
         print("Token guardado en SharedPreferences");
         notifyListeners();
+        return true;
       }
+      return false;
 
+    } on DioException catch (e) {
+      print("Error en login: ${e.response?.statusCode} - ${e.response?.data}");
+      return false;
     } catch (e) {
       print("Error detectado: $e");
+      return false;
     }
-
-
-    // if(email == "marianobarella1@gmail.com" && password == "1905") {
-    //   _email = email;
-    //   _isLoggedIn = true;
-
-
-    //   // CREA EL SHAREDPREFERENCES Y GUARDA LOS DATOS
-    //   SharedPreferences prefs = await SharedPreferences.getInstance();
-    //   await prefs.setString("email", email);
-    //   await prefs.setBool("isLoggedIn", true);
-    //   notifyListeners();
-    // } else {
-    //   throw Exception("Credenciales incorrectas");
-    // }
-
   }
 
   // REGISTRO
-  Future <void> register (String email, String password, String nombre) async {
+  Future<bool> register(String email, String password) async {
     final dio = DioClient.getDio();
   
     try {
-      await dio.post('auth/register', data: {
+      final response = await dio.post('auth/register', data: {
         'UserName': email,
-        'Password': password, 
-        // 'Email': email,
+        'Password': password,
+        'Rol': 'Admin',
       });
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("Registro exitoso");
+        return true;
+      }
+      return false;
     } on DioException catch (e) {
-      throw Exception("Error en el registro: ${e.response?.data}");
+      print("Error en registro: ${e.response?.statusCode} - ${e.response?.data}");
+      return false;
+    } catch (e) {
+      print("Error en registro: $e");
+      return false;
     }
   }
 
@@ -93,6 +96,7 @@ class LoginProvider extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove("email");
     await prefs.remove("isLoggedIn");
+    await prefs.remove("token");
     notifyListeners();
   }
   

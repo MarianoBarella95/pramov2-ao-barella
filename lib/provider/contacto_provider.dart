@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:pramov2_ao1_barella/database/db_helper.dart';
 import 'package:pramov2_ao1_barella/model/contacto.dart';
 import 'package:pramov2_ao1_barella/services/dio_client.dart';
@@ -13,7 +14,8 @@ class ContactoProvider extends ChangeNotifier {
   // }
 
   ContactoProvider() {
-    cargarContactos();
+    // No cargar contactos aquí, el token aún no está disponible
+    // Se cargará después del login en screens/login.dart
   }
 
   Future<void> cargarContactos() async {
@@ -38,12 +40,26 @@ class ContactoProvider extends ChangeNotifier {
   Future<void> agregarContacto(Contacto contacto) async {
     final dio = DioClient.getDio();
     try {
-      final response = await dio.post('/minimal/contactos', data: contacto.toMap());
+      final response = await dio.post('Contactos', data: {
+        'nombre': contacto.nombre,
+        'apellido': contacto.apellido,
+        'telefono': contacto.telefono,
+        'domicilio': contacto.domicilio,
+        'genero': contacto.genero,
+      });
       if (response.statusCode == 200 || response.statusCode == 201) {
         await cargarContactos();
+      } else {
+        print('POST Contactos falló: ${response.statusCode} ${response.data}');
       }
+    } on DioException catch (e) {
+      print('Error agregando el contacto: ${e.response?.statusCode}');
+      print('Response data: ${e.response?.data}');
+      print('Request path: ${e.requestOptions.uri}');
+      print('Request headers: ${e.requestOptions.headers}');
+      print('Request data: ${e.requestOptions.data}');
     } catch (e) {
-      print("Error cargando los contactos: $e");
+      print('Error agregando el contacto: $e');
     }
     
     // final newId = await DbHelper.insertarContacto(contacto);
@@ -67,7 +83,7 @@ class ContactoProvider extends ChangeNotifier {
   Future<void> eliminarContacto(Contacto contacto) async {
     final dio = DioClient.getDio();
     try {
-      await dio.delete('/api/Contactos/${contacto.id}');
+      await dio.delete('Contactos/${contacto.id}');
       _contactos.removeWhere((c) => c.id == contacto.id);
       notifyListeners();
     } catch (e) {
@@ -99,17 +115,33 @@ class ContactoProvider extends ChangeNotifier {
 // }
 
   Future<void> actualizarContacto(Contacto contacto) async {
-    await DbHelper.actualizarContacto(contacto);
-    
-    final index = _contactos.indexWhere((c) => c.id  == contacto.id);
-  
-    if(index != -1) {
-      _contactos[index] = contacto;
-      
-    }
+    final dio = DioClient.getDio();
+    try {
+      // if (contacto.id == null) {
+      //   return;
+      // }
 
-    notifyListeners();
+      final response = await dio.put(
+        'Contactos/${contacto.id}',
+        data: contacto.toMap(),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        await cargarContactos();
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Error actualizando el contacto: $e");
+    }
+    // await DbHelper.actualizarContacto(contacto);
+    
+    // final index = _contactos.indexWhere((c) => c.id  == contacto.id);
   
+    // if(index != -1) {
+    //   _contactos[index] = contacto;
+      
+    // }
+
   
   }
 
