@@ -41,4 +41,15 @@ class Contacto {
   String toString() {
     return 'Contacto{id: $id, nombre: $nombre, apellido: $apellido, telefono: $telefono, domicilio: $domicilio, genero: $genero}';
   }
+
+  factory Contacto.fromJson(Map<String, dynamic> json) {
+    return Contacto(
+      id: json['id'],
+      nombre: json['nombre']?.toString() ?? '',
+      apellido: json['apellido']?.toString() ?? '',
+      telefono: json['telefono']?.toString() ?? '',
+      domicilio: json['domicilio']?.toString() ?? '',
+      genero: json['genero']?.toString() ?? '',
+    );
+  }
 }

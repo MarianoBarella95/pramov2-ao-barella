@@ -11,7 +11,6 @@ class NuevoContacto extends StatefulWidget {
 }
 
 class _NuevoContactoState extends State<NuevoContacto> {
-
   int id = 0;
 
   final _nombreController = TextEditingController();
@@ -19,14 +18,14 @@ class _NuevoContactoState extends State<NuevoContacto> {
   final _telefonoController = TextEditingController();
   final _domicilioController = TextEditingController();
 
-  void _guardarContacto() {
-
+  void _guardarContacto() async {
     if (_nombreController.text.isEmpty ||
         _apellidoController.text.isEmpty ||
         _telefonoController.text.isEmpty ||
         _domicilioController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Debe completar todos los campos")));
+        SnackBar(content: Text("Debe completar todos los campos")),
+      );
       return;
     }
 
@@ -39,14 +38,17 @@ class _NuevoContactoState extends State<NuevoContacto> {
       genero: _generoSeleccionado,
     );
 
-  Provider.of<ContactoProvider>(context, listen: false)
-        .agregarContacto(nuevoContacto);
+    await Provider.of<ContactoProvider>(
+      context,
+      listen: false,
+    ).agregarContacto(nuevoContacto);
 
-    Navigator.pop(context, nuevoContacto);
+    if (mounted) {
+      Navigator.pop(context, nuevoContacto);
+    }
   }
 
-  String _generoSeleccionado = "Masculino"; 
-
+  String _generoSeleccionado = "Masculino";
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +56,12 @@ class _NuevoContactoState extends State<NuevoContacto> {
       appBar: AppBar(
         title: Text("Agregar Contacto"),
         actions: [
-          IconButton(onPressed: () {
-            _guardarContacto();
-          }, icon: Icon(Icons.check, size: 30)),
+          IconButton(
+            onPressed: () {
+              _guardarContacto();
+            },
+            icon: Icon(Icons.check, size: 30),
+          ),
         ],
       ),
       body: Center(
@@ -65,7 +70,11 @@ class _NuevoContactoState extends State<NuevoContacto> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset("assets/images/add-friend.png", height: 150, width: 150),
+              Image.asset(
+                "assets/images/add-friend.png",
+                height: 150,
+                width: 150,
+              ),
               SizedBox(height: 30),
               TextField(
                 controller: _nombreController,
@@ -99,25 +108,25 @@ class _NuevoContactoState extends State<NuevoContacto> {
                 ),
               ),
               RadioListTile<String>(
-        title: Text("Masculino"),
-        value: "Masculino",
-        groupValue: _generoSeleccionado,
-        onChanged: (value) {
-          setState(() {
-            _generoSeleccionado = value!;
-          });
-        },
-      ),
-      RadioListTile<String>(
-        title: Text("Femenino"),
-        value: "Femenino",
-        groupValue: _generoSeleccionado,
-        onChanged: (value) {
-          setState(() {
-            _generoSeleccionado = value!;
-          });
-        },
-      ),
+                title: Text("Masculino"),
+                value: "Masculino",
+                groupValue: _generoSeleccionado,
+                onChanged: (value) {
+                  setState(() {
+                    _generoSeleccionado = value!;
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: Text("Femenino"),
+                value: "Femenino",
+                groupValue: _generoSeleccionado,
+                onChanged: (value) {
+                  setState(() {
+                    _generoSeleccionado = value!;
+                  });
+                },
+              ),
             ],
           ),
         ),
