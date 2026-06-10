@@ -87,14 +87,12 @@ class _LoginState extends State<Login> {
                     final contactoProvider = context.read<ContactoProvider>();
 
                     if (_isLoginMode) {
-                      // Modo LOGIN
                       final success = await loginProvider.login(
                         _emailController.text,
                         _passwordController.text,
                       );
 
                       if (success && mounted) {
-                        // Cargar contactos después del login
                         await contactoProvider.cargarContactos();
 
                         if (mounted) {
@@ -104,7 +102,6 @@ class _LoginState extends State<Login> {
                         mostrarMensaje(currentContext, "Email o contraseña incorrectos", Colors.red, 2);
                       }
                     } else {
-                      // Modo REGISTRO
                       final success = await loginProvider.register(
                         _emailController.text,
                         _passwordController.text,

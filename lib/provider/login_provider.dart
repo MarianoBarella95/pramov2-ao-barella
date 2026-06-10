@@ -35,7 +35,7 @@ class LoginProvider extends ChangeNotifier {
       print("Contenido de response.data: ${response.data}");
 
       if (response.statusCode == 200) {
-        String token = response.data; // El servidor retorna el token como String directo
+        String token = response.data; 
         
         print("Token recibido: ${token.length > 20 ? token.substring(0, 20) : token}...");
 
