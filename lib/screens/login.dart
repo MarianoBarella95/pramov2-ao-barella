@@ -82,6 +82,10 @@ class _LoginState extends State<Login> {
                       return;
                     }
 
+                    // Capturar referencias antes de operaciones asincrónicas
+                    final currentContext = context;
+                    final contactoProvider = context.read<ContactoProvider>();
+
                     if (_isLoginMode) {
                       // Modo LOGIN
                       final success = await loginProvider.login(
@@ -89,16 +93,15 @@ class _LoginState extends State<Login> {
                         _passwordController.text,
                       );
 
-                      if (success) {
-                        // Guardar referencia al proveedor ANTES de navegar
-                        final contactoProvider = context.read<ContactoProvider>();
+                      if (success && mounted) {
+                        // Cargar contactos después del login
                         await contactoProvider.cargarContactos();
 
                         if (mounted) {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Contactos()));
+                          Navigator.pushReplacement(currentContext, MaterialPageRoute(builder: (context) => Contactos()));
                         }
-                      } else {
-                        mostrarMensaje(context, "Email o contraseña incorrectos", Colors.red, 2);
+                      } else if (!success && mounted) {
+                        mostrarMensaje(currentContext, "Email o contraseña incorrectos", Colors.red, 2);
                       }
                     } else {
                       // Modo REGISTRO
@@ -107,15 +110,15 @@ class _LoginState extends State<Login> {
                         _passwordController.text,
                       );
 
-                      if (success) {
-                        mostrarMensaje(context, "Registro exitoso. Inicia sesión con tus credenciales.", Colors.green, 2);
+                      if (success && mounted) {
+                        mostrarMensaje(currentContext, "Registro exitoso. Inicia sesión con tus credenciales.", Colors.green, 2);
                         setState(() {
                           _isLoginMode = true;
                           _emailController.clear();
                           _passwordController.clear();
                         });
-                      } else {
-                        mostrarMensaje(context, "Error en el registro. Intenta con otro email o contraseña.", Colors.red, 2);
+                      } else if (!success && mounted) {
+                        mostrarMensaje(currentContext, "Error en el registro. Intenta con otro email o contraseña.", Colors.red, 2);
                       }
                     }
                   },
