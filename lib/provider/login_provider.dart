@@ -54,7 +54,11 @@ class LoginProvider extends ChangeNotifier {
       return false;
 
     } on DioException catch (e) {
-      print("Error en login: ${e.response?.statusCode} - ${e.response?.data}");
+      print("Error en login: status=${e.response?.statusCode} data=${e.response?.data}");
+      print("DioException message: ${e.message}");
+      print("DioException type: ${e.type}");
+      print("Request URI: ${e.requestOptions.uri}");
+      if (e.error != null) print("Inner error: ${e.error}");
       return false;
     } catch (e) {
       print("Error detectado: $e");
@@ -79,7 +83,11 @@ class LoginProvider extends ChangeNotifier {
       }
       return false;
     } on DioException catch (e) {
-      print("Error en registro: ${e.response?.statusCode} - ${e.response?.data}");
+      print("Error en registro: status=${e.response?.statusCode} data=${e.response?.data}");
+      print("DioException message: ${e.message}");
+      print("DioException type: ${e.type}");
+      print("Request URI: ${e.requestOptions.uri}");
+      if (e.error != null) print("Inner error: ${e.error}");
       return false;
     } catch (e) {
       print("Error en registro: $e");

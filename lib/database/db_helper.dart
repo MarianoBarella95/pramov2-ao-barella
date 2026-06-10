@@ -4,7 +4,7 @@ import 'package:pramov2_ao1_barella/model/contacto.dart';
 class DbHelper {
   static Database? _database;
   static const _dbName = 'contactos.db';
-  static const _dbVersion = 1;
+  static const _dbVersion = 2;
   static const _tableName = 'contactos';
 
   static Future<Database> get database async {
@@ -30,9 +30,26 @@ class DbHelper {
             apellido TEXT NOT NULL,
             telefono TEXT NOT NULL,
             domicilio TEXT NOT NULL,
-            genero TEXT NOT NULL
+            genero TEXT NOT NULL,
+            email TEXT,
+            fechaNacimiento TEXT
           )
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        // Añadir columnas nuevas en migraciones futuras
+        if (oldVersion < 2) {
+          try {
+            await db.execute('ALTER TABLE $_tableName ADD COLUMN email TEXT');
+          } catch (e) {
+            // ignorar si ya existe
+          }
+          try {
+            await db.execute('ALTER TABLE $_tableName ADD COLUMN fechaNacimiento TEXT');
+          } catch (e) {
+            // ignorar si ya existe
+          }
+        }
       },
     );
   }
@@ -48,11 +65,14 @@ class DbHelper {
 
     return List.generate(maps.length, (i) {
       return Contacto(
+        id: maps[i]['id'],
         nombre: maps[i]['nombre'],
         apellido: maps[i]['apellido'],
         telefono: maps[i]['telefono'],
         domicilio: maps[i]['domicilio'],
         genero: maps[i]['genero'],
+        email: maps[i]['email']?.toString(),
+        fechaNacimiento: maps[i]['fechaNacimiento']?.toString(),
       );
     });
   }
@@ -68,10 +88,12 @@ class DbHelper {
 
   static Future<int> actualizarContacto(Contacto contacto) async {
     final db = await database;
+    if (contacto.id == null) return 0;
     return await db.update(
       _tableName,
       contacto.toMap(),
       where: 'id = ?',
+      whereArgs: [contacto.id],
     );
   }
 }

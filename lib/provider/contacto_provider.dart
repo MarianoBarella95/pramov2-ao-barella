@@ -46,6 +46,8 @@ class ContactoProvider extends ChangeNotifier {
         'telefono': contacto.telefono,
         'domicilio': contacto.domicilio,
         'genero': contacto.genero,
+        'email': contacto.email,
+        'fechaNacimiento': contacto.fechaNacimiento,
       });
       if (response.statusCode == 200 || response.statusCode == 201) {
         await cargarContactos();
